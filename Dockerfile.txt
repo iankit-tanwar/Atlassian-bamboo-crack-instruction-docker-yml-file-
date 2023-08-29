@@ -1,0 +1,85 @@
+-----------------------------docker-compose.yml-------------------------
+
+version: '3'
+services:
+  bamboo:
+    image: atlassian/bamboo:<bamboo-version>
+    ports:
+      - "8085:8085"  # Change the ports if necessary
+    volumes:
+      - ./bamboo-home:/var/atlassian/application-data/bamboo
+    environment:
+      - ATL_PROXY_NAME=
+      - ATL_PROXY_PORT=
+      - ATL_PROXY_SCHEME=
+      - BAMBOO_HOME=/var/atlassian/application-data/bamboo
+      - JVM_MINIMUM_MEMORY=512m
+      - JVM_MAXIMUM_MEMORY=2048m
+      - JVM_SUPPORT_RECOMMENDED_ARGS=-Duser.timezone=UTC
+      - TZ=UTC
+      - ATL_DB_TYPE=mysql
+      - ATL_JDBC_URL=jdbc:mysql://mysql:3306/bamboo?useSSL=false
+      - ATL_JDBC_USER=<mysql-username>
+      - ATL_JDBC_PASSWORD=<mysql-password>
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:<mysql-version>
+    environment:
+      MYSQL_ROOT_PASSWORD: <mysql-root-password>
+      MYSQL_DATABASE: bamboo
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+-----------------------------------------------------------------------
+Replace the placeholders <bamboo-version>, <mysql-version>, <mysql-username>, <mysql-password>, and <mysql-root-password> with appropriate values.
+
+1 docker-compose up -d
+
+2 docker exec -it containerName /bin/bash
+
+3 Update Package Lists:
+        
+       apt-get update
+
+       apt-get install vim -y
+
+
+4 Command to Search:
+
+     find / -type f -name setenv.sh 2>/dev/null
+
+5 Configure Bamboo Java Agent:
+
+      vim setenv.sh
+
+      Edit the setenv.sh file and add the following line:
+     
+      export JAVA_OPTS="$JAVA_OPTS -javaagent:/opt/atlassian-agent/atlassian-agent.jar"
+
+
+6 Activate Confluence:
+   cd /opt
+   mkdir atlassian-agent
+   cd atlassian-agent
+
+   pwd 
+   
+   docker cp atlassian-agent.jar 4baaad68637c:/opt/atlassian-agent
+   Successfully copied 976kB to 4baaad68637c:/opt/atlassian-agent
+
+   chmod 777 atlassian-agent.jar
+
+    apt update
+    apt install default-jre default-jdk
+
+
+
+   java -jar /opt/atlassian-agent/atlassian-agent.jar -m email@gmail.com -o password -p bamboo -s BSI1-KSO7-OV33-I7F7
+
+
+
+
+
+
